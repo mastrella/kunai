@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en-US">
+<head>
+
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta name="author" content="mastrella" />
+
+	<!-- Stylesheets
+	============================================= -->
+	<!-- <link rel="stylesheet" href="css/bootstrap.css" type="text/css" /> -->
+	<!-- <link rel="stylesheet" href="style.css" type="text/css" /> -->
+
+	<!-- <link rel="stylesheet" href="css/responsive.css" type="text/css" /> -->
+	<!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
+
+	<!-- Document Title
+	============================================= -->
+	<title>Kunai - Language Readability Score</title>
+
+</head>
+<body>
+  <h1> Kunai - Language Readability Score</h1>
+  <div>
+    <textarea id="inputText">Textarea</textarea>
+  </div>
+  <div>
+    <button onclick="scoreCalc()">Get Textarea Score!</button>
+  </div>
+  <br/>
+  <div>
+    <input type="file" id="textDoc" onchange="scoreCalc()">
+  </div>
+  <br/>
+	<div>
+		Runtime: <input type="number" id="runtime"></input>
+	</div>
+	<br/>
+  <div>
+    <span id="score">Please "Choose File" or "Get Textare Score" to find your Kunai Score</span>
+  </div>
+
+  <script>
+    function textScore(strText) {
+      strText = strText + " ";
+      strText = strText.replace(/'"();/g,"");
+      strText = strText.replace(/[\n\r]+/g," ");
+      console.log(strText);
+
+      var word = strText.split(" ");
+      var words = word.length - 1;
+      console.log("words: " + words);
+
+      var miniwords = 0;
+      word.forEach(miniCount);
+
+      function miniCount(item){
+        if (item.length < 4){
+          miniwords += 1;
+        }
+      }
+      console.log("words with < 4 characters: " + miniwords);
+
+      var s1 = strText.split(". ").length - 1;
+      var s2 = strText.split("? ").length - 1;
+      var s3 = strText.split("! ").length - 1;
+      var sentences = s1 + s2 + s3;
+      console.log("sentences: " + sentences);
+
+			var runtime = document.getElementById("runtime").value;
+			var score = (words + miniwords) / sentences;
+			if (runtime > 1){
+				score = (words + miniwords)/sentences + Math.pow((words/runtime),-1)*1000;
+			}
+      return score;
+    }
+    function scoreCalc() {
+      if (window.File && window.FileReader && window.FileList && window.Blob) {
+        console.log("words");
+        var doc = document.getElementById("textDoc");
+        var f = doc.files[0];
+        if (!f) {
+          alert("Failed to load file, your Textarea Score will be shown");
+          var strTextarea = document.getElementById('inputText').value;
+					var kunai = textScore(strTextarea);
+          var info = document.getElementById("score");
+          info.innerHTML = "Kunai Score = " + kunai;
+        } else if (false) {
+          //validate file types yet to come
+          alert(f.type + " is not a valid text file.");
+        } else {
+          var r = new FileReader();//create file reader object
+          r.readAsText(f);//read file as text
+
+          //attach function to execute when loading file finishes.
+          r.onload = function (e) {
+            var strText = e.target.result;
+						var kunai = textScore(strText);
+            var info = document.getElementById("score");
+            info.innerHTML = "Kunai Score = " + kunai;
+          }
+        }
+      } else {
+        alert('The File APIs are not fully supported by your browser.');
+      }
+    }
+  </script>
+</body>
+</html>
