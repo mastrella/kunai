@@ -15,11 +15,11 @@
 
 	<!-- Document Title
 	============================================= -->
-	<title>Kunai - Language Readability Score</title>
+	<title>Kunei - Language Readability Score</title>
 
 </head>
 <body>
-  <h1> Kunai - Language Readability Score</h1>
+  <h1> Kunei - Language Readability Score</h1>
   <div>
     <textarea id="inputText">Textarea</textarea>
   </div>
@@ -48,6 +48,7 @@
 
       var word = strText.split(" ");
       var words = word.length - 1;
+	
       console.log("words: " + words);
 
       var miniwords = 0;
@@ -96,7 +97,7 @@
             var strText = e.target.result;
 						var kunai = textScore(strText);
             var info = document.getElementById("score");
-            info.innerHTML = "Kunai Score = " + kunai;
+            info.innerHTML = "Kunei Score = " + kunai;
           }
         }
       } else {
