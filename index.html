@@ -70,8 +70,9 @@
 
 			var runtime = document.getElementById("runtime").value;
 			var score = (words + miniwords) / sentences;
+	    		var speed=(runtime/words)/10;
 			if (runtime > 1){
-				score = (words + miniwords)/sentences + Math.pow((words/runtime),-1)*1000;
+				score = ((words + miniwords)/sentences + speed)-1)/64)*100
 			}
       return score;
     }
