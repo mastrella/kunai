@@ -136,6 +136,8 @@
 				var speed = (words/runtime)/10;
 				score = ((((words + miniwords)/sentences + speed)-1)/64)*100;
 			}
+			flesch = 206.835 - 1.015*(words/sentences) - 84.6*(syllables/words);
+			eflaw  = (words + miniwords)/sentences;
 
 			var info = document.getElementById("kscore");
 			info.innerHTML = score;
