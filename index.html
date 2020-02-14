@@ -12,6 +12,21 @@
 
 	<!-- <link rel="stylesheet" href="css/responsive.css" type="text/css" /> -->
 	<!-- <meta name="viewport" content="width=device-width, initial-scale=1" /> -->
+	<style>
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+		td, th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+		tr:nth-child(even) {
+			background-color: #dddddd;
+		}
+	</style>
 
 	<!-- Document Title
 	============================================= -->
@@ -19,48 +34,93 @@
 
 </head>
 <body>
+
 	<img src="image.png" style="float:right" alt="Kunai Logo">
   <h1> Kunei - Language Readability Score</h1>
-	<h3> Either paste transcript text or add .txt file below <h3>
-  <div>
-    <textarea id="inputText">Textarea</textarea>
-  </div>
-  <div>
-    <button onclick="scoreCalc()">Get Textarea Score!</button>
-  </div>
-  <br/>
-  <div>
-    <input type="file" id="textDoc" onchange="scoreCalc()">
-  </div>
-  <br/>
+	<h3> Either add .txt file or paste transcript text below <h3>
 	<div>
-		Runtime: <input type="number" id="runtime" onchange="scoreCalc()"></input>
-	</div>
-	<br/>
+		<input type="file" id="textDoc" onchange="getScore()">
+	</div><br/>
+	<div>
+		Runtime: <input type="number" id="runtime" onchange="getScore()"></input>
+	</div><br/>
+	<div>
+		<textarea id="inputText">Textarea</textarea>
+	</div><br/>
+	<div>
+    <button onclick="getScore()">Get Textarea Score!</button>
+  </div><br/>
   <div>
-    <span id="score">Please "Choose File" or "Get Textarea Score" to find your Kunei Score</span>
-  </div>
+    <span id="score">Please "Choose File", or copy data into the field above to find your Kunei Score</span>
+  </div><br/><br/>
+	<h2>Outputs</h2>
+	<table>
+  <tr>
+    <th>KScore</th>
+    <th>EFlaw</th>
+    <th>Flesch</th>
+		<th>Characters</th>
+		<th>Syllables</th>
+		<th>Short Words</th>
+		<th>Words</th>
+		<th>Sentences</th>
+		<th>Runtime</th>
+  </tr>
+  <tr>
+		<th><span id="kscore">-</span></th>
+    <th><span id="eflaw">-</span></th>
+    <th><span id="flesch">-</span></th>
+		<th><span id="runtime1">0</span></th>
+		<th><span id="characters">0</span></th>
+		<th><span id="syllables">0</span></th>
+		<th><span id="shortwords">0</span></th>
+		<th><span id="words">0</span></th>
+		<th><span id="sentences">0</span></th>
+  </tr>
+
 
   <script>
-    function textScore(strText) {
-      strText = strText + " ";
-      strText = strText.replace(/'"();/g,"");
-      strText = strText.replace(/[\n\r]+/g," ");
-      console.log(strText);
+    function updateOutputs(strText) {
+			var kscore, eflaw, flesch, characters, syllables, words, sentences, runtime;
+			characters = 0;
+			syllables = 0;
+			strText = strText + " ";
+			strText = strText.replace(/'"();/g,"");
+			strText = strText.replace(/[\n\r]+/g," ");
+			console.log(strText);
+
+			function isVowel(x) {
+				var result;
+				result = x == "A" || x == "E" || x == "I" || x == "O" || x == "U" || x == "a" || x == "e" || x == "i" || x == "o" || x == "u";
+				return result;
+			}
+
+			function miniCount(item){
+				characters += item.length;
+				if (item.length < 4){
+					miniwords += 1;
+				}
+				var wordsyl = 0;
+				for (var i = 0; i < item.length; i++){
+					if (i == 0){
+						wordsyl++;
+					// } else if (i > 1 && isVowel(item[i]) && !isVowel(item[i-1])){
+					// 	wordsyl++;
+					// } else if (i > 1 && isVowel(item[i]) && isVowel(item[i-1]) && isVowel(item[i-2])){
+					// 	wordsyl++;
+					}
+				}
+				syllables += wordsyl;
+			}
 
       var word = strText.split(" ");
-      var words = word.length - 1;
+      words = word.length - 1;
       console.log("words: " + words);
 
       var miniwords = 0;
       word.forEach(miniCount);
-
-      function miniCount(item){
-        if (item.length < 4){
-          miniwords += 1;
-        }
-      }
-      console.log("words with < 4 characters: " + miniwords);
+			console.log("syllables: " + syllables);
+			console.log("words with < 4 characters: " + miniwords);
 
       var s1 = strText.split(". ").length - 1;
       var s2 = strText.split("? ").length - 1;
@@ -70,14 +130,35 @@
 
 			var runtime = document.getElementById("runtime").value;
 			console.log("runtime: " + runtime);
+
 			var score = (words + miniwords) / sentences;
 			if (runtime > 1){
 				var speed = (words/runtime)/10;
 				score = ((((words + miniwords)/sentences + speed)-1)/64)*100;
 			}
+
+			var info = document.getElementById("kscore");
+			info.innerHTML = score;
+			info = document.getElementById("eflaw");
+			info.innerHTML = eflaw;
+			info = document.getElementById("flesch");
+			info.innerHTML = flesch;
+			info = document.getElementById("characters");
+			info.innerHTML = characters;
+			info = document.getElementById("syllables");
+			info.innerHTML = syllables;
+			info = document.getElementById("shortwords");
+			info.innerHTML = miniwords;
+			info = document.getElementById("words");
+			info.innerHTML = words;
+			info = document.getElementById("sentences");
+			info.innerHTML = sentences;
+			info = document.getElementById("runtime1");
+			info.innerHTML = runtime;
       return score;
     }
-    function scoreCalc() {
+
+    function getScore() {
       if (window.File && window.FileReader && window.FileList && window.Blob) {
         console.log("words");
         var doc = document.getElementById("textDoc");
@@ -85,9 +166,9 @@
         if (!f) {
           alert("Failed to load file, your Textarea Score will be shown");
           var strTextarea = document.getElementById('inputText').value;
-					var kunai = textScore(strTextarea);
-          var info = document.getElementById("score");
-          info.innerHTML = "Kunei Score = " + kunai;
+					var kunai = updateOutputs(strTextarea);
+          // var info = document.getElementById("score");
+          // info.innerHTML = "Kunei Score = " + kunai;
         } else if (false) {
           //validate file types yet to come
           alert(f.type + " is not a valid text file.");
@@ -98,9 +179,9 @@
           //attach function to execute when loading file finishes.
           r.onload = function (e) {
             var strText = e.target.result;
-						var kunai = textScore(strText);
-            var info = document.getElementById("score");
-            info.innerHTML = "Kunei Score = " + kunai;
+						var kscore = updateOutputs(strText);
+            // var info = document.getElementById("score");
+            // info.innerHTML = "Kunei Score = " + kscore;
           }
         }
       } else {
