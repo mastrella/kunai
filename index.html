@@ -59,12 +59,12 @@
     <th>KScore</th>
     <th>EFlaw</th>
     <th>Flesch</th>
+		<th>Runtime</th>
 		<th>Characters</th>
 		<th>Syllables</th>
 		<th>Short Words</th>
 		<th>Words</th>
 		<th>Sentences</th>
-		<th>Runtime</th>
   </tr>
   <tr>
 		<th><span id="kscore">-</span></th>
@@ -81,9 +81,10 @@
 
   <script>
     function updateOutputs(strText) {
-			var kscore, eflaw, flesch, characters, syllables, words, sentences, runtime;
+			var kscore, eflaw, flesch, characters, syllables, miniwords, words, sentences;
 			characters = 0;
 			syllables = 0;
+			miniwords = 0;
 			strText = strText + " ";
 			strText = strText.replace(/'"();/g,"");
 			strText = strText.replace(/[\n\r]+/g," ");
@@ -104,10 +105,10 @@
 				for (var i = 0; i < item.length; i++){
 					if (i == 0){
 						wordsyl++;
-					// } else if (i > 1 && isVowel(item[i]) && !isVowel(item[i-1])){
-					// 	wordsyl++;
-					// } else if (i > 1 && isVowel(item[i]) && isVowel(item[i-1]) && isVowel(item[i-2])){
-					// 	wordsyl++;
+					} else if (i > 1 && isVowel(item[i]) && !isVowel(item[i-1])){
+						wordsyl++;
+					} else if (i > 1 && isVowel(item[i]) && isVowel(item[i-1]) && isVowel(item[i-2])){
+						wordsyl++;
 					}
 				}
 				syllables += wordsyl;
@@ -117,7 +118,6 @@
       words = word.length - 1;
       console.log("words: " + words);
 
-      var miniwords = 0;
       word.forEach(miniCount);
 			console.log("syllables: " + syllables);
 			console.log("words with < 4 characters: " + miniwords);
