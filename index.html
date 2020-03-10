@@ -56,6 +56,8 @@
 	<h2>Outputs</h2>
 	<table>
   <tr>
+		<th>Kunei Score</th>
+		<th>Test</th>
     <th>KScore</th>
     <th>EFlaw</th>
     <th>Flesch</th>
@@ -67,6 +69,8 @@
 		<th>Sentences</th>
   </tr>
   <tr>
+		<th><span id="kunei_score">-</span></th>
+		<th><span id="test">-</span></th>
 		<th><span id="kscore">-</span></th>
     <th><span id="eflaw">-</span></th>
     <th><span id="flesch">-</span></th>
@@ -81,7 +85,7 @@
 
   <script>
     function updateOutputs(strText) {
-			var kscore, eflaw, flesch, characters, syllables, miniwords, words, sentences;
+			var kunei_score, test, kscore, eflaw, flesch, characters, syllables, miniwords, words, sentences;
 			characters = 0;
 			syllables = 0;
 			miniwords = 0;
@@ -136,10 +140,16 @@
 				var speed = (words/runtime)/10;
 				score = ((((words + miniwords)/sentences + speed)-1)/64)*100;
 			}
+			test = 3*(characters/words) + 6.5*(syllables/words) + 2.25*(words/sentences) + 0.5*(words/runtime+1);
+			kunei_score = (test-40)/(104.52-40)*100;
 			flesch = 206.835 - 1.015*(words/sentences) - 84.6*(syllables/words);
 			eflaw  = (words + miniwords)/sentences;
 
-			var info = document.getElementById("kscore");
+			var info = document.getElementById("kunei_score");
+			info.innerHTML = kunei_score;
+			info = document.getElementById("test");
+			info.innerHTML = test;
+			info = document.getElementById("kscore");
 			info.innerHTML = score;
 			info = document.getElementById("eflaw");
 			info.innerHTML = eflaw;
